@@ -15,10 +15,15 @@ export default function AdminLogin() {
     return <Navigate to="/admin/dashboard" replace />;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (login(email, password)) {
+    setSubmitting(true);
+    const ok = await login(email, password);
+    setSubmitting(false);
+    if (ok) {
       navigate('/admin/dashboard');
     } else {
       setError('Invalid email or password');
@@ -77,14 +82,15 @@ export default function AdminLogin() {
           </div>
           <button
             type="submit"
-            className="w-full py-3 bg-royal-blue text-white font-bold rounded-lg hover:bg-royal-blue-dark transition-colors"
+            disabled={submitting}
+            className="w-full py-3 bg-royal-blue text-white font-bold rounded-lg hover:bg-royal-blue-dark transition-colors disabled:opacity-60"
           >
-            Sign In
+            {submitting ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          Demo: admin@pratappunja.com / ppma2024
+          Authorized personnel only
         </p>
       </motion.div>
     </div>

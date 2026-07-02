@@ -25,7 +25,14 @@ import AdminMessages from './pages/admin/AdminMessages';
 import AdminSettings from './pages/admin/AdminSettings';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, initializing } = useAuth();
+  if (initializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center gradient-hero">
+        <div className="h-10 w-10 rounded-full border-4 border-white/30 border-t-white animate-spin" />
+      </div>
+    );
+  }
   if (!isAuthenticated) return <Navigate to="/admin" replace />;
   return <>{children}</>;
 }
