@@ -46,7 +46,8 @@ export default function HighlightsSection() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {highlights.map((stat, index) => {
-            const IconComponent = (typeof stat?.icon === 'string' && iconMap[stat.icon]) || FiAward;
+            const iconKey = typeof stat?.icon === 'string' ? stat.icon : 'award';
+            const IconComponent = iconMap[iconKey] ?? FiAward;
             const value = typeof stat?.value === 'number' ? stat.value : 0;
             const label = typeof stat?.label === 'string' ? stat.label : '';
 
