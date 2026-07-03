@@ -29,6 +29,10 @@ export default function HighlightsSection() {
 
   const highlights = Array.isArray(homeContent?.highlights) ? homeContent.highlights : [];
 
+  if (!highlights || highlights.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 gradient-hero relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
