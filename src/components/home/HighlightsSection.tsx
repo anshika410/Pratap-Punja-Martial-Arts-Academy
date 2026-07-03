@@ -5,14 +5,23 @@ import { FiUsers, FiAward, FiClock, FiGlobe, FiBookOpen } from 'react-icons/fi';
 import { GiMedal } from 'react-icons/gi';
 import { useData } from '../../context/DataContext';
 
-const iconMap: Record<string, React.ComponentType<{ size: number }>> = {
-  users: FiUsers,
-  award: FiAward,
-  clock: FiClock,
-  medal: GiMedal,
-  globe: FiGlobe,
-  book: FiBookOpen,
-};
+function renderIcon(iconName: string | undefined, size: number = 32) {
+  switch (iconName) {
+    case 'users':
+      return <FiUsers size={size} />;
+    case 'clock':
+      return <FiClock size={size} />;
+    case 'medal':
+      return <GiMedal size={size} />;
+    case 'globe':
+      return <FiGlobe size={size} />;
+    case 'book':
+      return <FiBookOpen size={size} />;
+    case 'award':
+    default:
+      return <FiAward size={size} />;
+  }
+}
 
 export default function HighlightsSection() {
   const { homeContent } = useData();
@@ -46,10 +55,9 @@ export default function HighlightsSection() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {highlights.map((stat, index) => {
-            const iconKey = typeof stat?.icon === 'string' ? stat.icon : 'award';
-            const IconComponent = iconMap[iconKey] ?? FiAward;
             const value = typeof stat?.value === 'number' ? stat.value : 0;
             const label = typeof stat?.label === 'string' ? stat.label : '';
+            const iconName = typeof stat?.icon === 'string' ? stat.icon : 'award';
 
             return (
               <motion.div
@@ -61,7 +69,7 @@ export default function HighlightsSection() {
                 className="glass-card rounded-xl p-6 text-center hover:bg-white/20 transition-all duration-300 group"
               >
                 <div className="text-saffron mb-3 flex justify-center group-hover:scale-110 transition-transform">
-                  <IconComponent size={32} />
+                  {renderIcon(iconName)}
                 </div>
                 <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                   {inView ? (
