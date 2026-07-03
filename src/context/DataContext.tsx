@@ -63,16 +63,31 @@ async function syncCollection<T extends WithId>(
     if (error) console.error(`[v0] delete ${table} failed:`, error.message);
   }
 
-  const toUpsert = items
+  // Brand-new rows use INSERT (allowed for anonymous public submissions like
+  // admissions/messages). Changed existing rows use UPDATE (admin-only via RLS).
+  // Note: a plain upsert would run INSERT ... ON CONFLICT DO UPDATE, which the
+  // anon role cannot do because it has no UPDATE policy.
+  const prevIds = new Set(prev.map((p) => p.id));
+
+  const toInsert = items
+    .filter((item) => !prevIds.has(item.id))
+    .map((item) => toRow(item, items.indexOf(item)));
+
+  if (toInsert.length) {
+    const { error } = await supabase.from(table).insert(toInsert);
+    if (error) console.error(`[v0] insert ${table} failed:`, error.message);
+  }
+
+  const toUpdate = items
     .filter((item) => {
       const before = prev.find((p) => p.id === item.id);
-      return !before || JSON.stringify(before) !== JSON.stringify(item);
+      return before && JSON.stringify(before) !== JSON.stringify(item);
     })
     .map((item) => toRow(item, items.indexOf(item)));
 
-  if (toUpsert.length) {
-    const { error } = await supabase.from(table).upsert(toUpsert);
-    if (error) console.error(`[v0] upsert ${table} failed:`, error.message);
+  for (const row of toUpdate) {
+    const { error } = await supabase.from(table).upsert(row);
+    if (error) console.error(`[v0] update ${table} failed:`, error.message);
   }
 }
 
