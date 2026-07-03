@@ -5,13 +5,13 @@ import { FiUsers, FiAward, FiClock, FiGlobe, FiBookOpen } from 'react-icons/fi';
 import { GiMedal } from 'react-icons/gi';
 import { useData } from '../../context/DataContext';
 
-const iconMap: Record<string, React.ReactNode> = {
-  users: <FiUsers size={32} />,
-  award: <FiAward size={32} />,
-  clock: <FiClock size={32} />,
-  medal: <GiMedal size={32} />,
-  globe: <FiGlobe size={32} />,
-  book: <FiBookOpen size={32} />,
+const iconMap: Record<string, React.ComponentType<{ size: number }>> = {
+  users: FiUsers,
+  award: FiAward,
+  clock: FiClock,
+  medal: GiMedal,
+  globe: FiGlobe,
+  book: FiBookOpen,
 };
 
 export default function HighlightsSection() {
@@ -53,7 +53,10 @@ export default function HighlightsSection() {
               className="glass-card rounded-xl p-6 text-center hover:bg-white/20 transition-all duration-300 group"
             >
               <div className="text-saffron mb-3 flex justify-center group-hover:scale-110 transition-transform">
-                {iconMap[stat.icon] || <FiAward size={32} />}
+                {(() => {
+                  const IconComponent = iconMap[stat.icon] || FiAward;
+                  return <IconComponent size={32} />;
+                })()}
               </div>
               <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                 {inView ? (
