@@ -1,25 +1,23 @@
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
-import { FiUsers, FiAward, FiClock, FiGlobe, FiBookOpen } from 'react-icons/fi';
-import { GiMedal } from 'react-icons/gi';
 import { useData } from '../../context/DataContext';
 
-function renderIcon(iconName: string | undefined, size: number = 32) {
+function getIconSymbol(iconName: string | undefined): string {
   switch (iconName) {
     case 'users':
-      return <FiUsers size={size} />;
+      return '👥';
     case 'clock':
-      return <FiClock size={size} />;
+      return '⏱️';
     case 'medal':
-      return <GiMedal size={size} />;
+      return '🏅';
     case 'globe':
-      return <FiGlobe size={size} />;
+      return '🌍';
     case 'book':
-      return <FiBookOpen size={size} />;
+      return '📚';
     case 'award':
     default:
-      return <FiAward size={size} />;
+      return '🏆';
   }
 }
 
@@ -62,6 +60,7 @@ export default function HighlightsSection() {
             const value = typeof stat?.value === 'number' ? stat.value : 0;
             const label = typeof stat?.label === 'string' ? stat.label : '';
             const iconName = typeof stat?.icon === 'string' ? stat.icon : 'award';
+            const icon = getIconSymbol(iconName);
 
             return (
               <motion.div
@@ -72,8 +71,8 @@ export default function HighlightsSection() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="glass-card rounded-xl p-6 text-center hover:bg-white/20 transition-all duration-300 group"
               >
-                <div className="text-saffron mb-3 flex justify-center group-hover:scale-110 transition-transform">
-                  {renderIcon(iconName)}
+                <div className="text-4xl mb-3 flex justify-center group-hover:scale-110 transition-transform">
+                  {icon}
                 </div>
                 <div className="text-3xl md:text-4xl font-bold text-white mb-1">
                   {inView ? (
