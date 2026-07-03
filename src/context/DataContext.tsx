@@ -175,7 +175,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const nextStudents = rows<Student>(studentsRes);
       const nextBlogs = rows<Blog>(blogsRes);
       const nextGallery = rows<GalleryItem>(galleryRes);
-      const nextHome = ((homeRes.data?.data as HomeContent) ?? defaultHomeContent);
+      
+      // Deep merge home content with defaults to ensure structure integrity
+      const homeFromDb = (homeRes.data?.data as Partial<HomeContent>) ?? {};
+      const nextHome: HomeContent = {
+        ...defaultHomeContent,
+        ...homeFromDb,
+        highlights: Array.isArray(homeFromDb.highlights) ? homeFromDb.highlights : defaultHomeContent.highlights,
+      };
+      
       const nextSettings = ((settingsRes.data?.data as SiteSettings) ?? defaultSiteSettings);
       const nextAdmissions = rows<AdmissionRequest>(admissionsRes);
       const nextMessages = rows<ContactMessage>(messagesRes);

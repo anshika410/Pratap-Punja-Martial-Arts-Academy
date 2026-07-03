@@ -18,6 +18,8 @@ export default function HighlightsSection() {
   const { homeContent } = useData();
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
 
+  const highlights = Array.isArray(homeContent?.highlights) ? homeContent.highlights : [];
+
   return (
     <section className="py-20 gradient-hero relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -43,31 +45,34 @@ export default function HighlightsSection() {
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {homeContent.highlights.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="glass-card rounded-xl p-6 text-center hover:bg-white/20 transition-all duration-300 group"
-            >
-              <div className="text-saffron mb-3 flex justify-center group-hover:scale-110 transition-transform">
-                {(() => {
-                  const IconComponent = iconMap[stat.icon] || FiAward;
-                  return <IconComponent size={32} />;
-                })()}
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-white mb-1">
-                {inView ? (
-                  <CountUp end={stat.value} duration={2.5} suffix="+" />
-                ) : (
-                  '0+'
-                )}
-              </div>
-              <div className="text-white/70 text-sm font-medium">{stat.label}</div>
-            </motion.div>
-          ))}
+          {highlights.map((stat, index) => {
+            const IconComponent = (typeof stat?.icon === 'string' && iconMap[stat.icon]) || FiAward;
+            const value = typeof stat?.value === 'number' ? stat.value : 0;
+            const label = typeof stat?.label === 'string' ? stat.label : '';
+
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="glass-card rounded-xl p-6 text-center hover:bg-white/20 transition-all duration-300 group"
+              >
+                <div className="text-saffron mb-3 flex justify-center group-hover:scale-110 transition-transform">
+                  <IconComponent size={32} />
+                </div>
+                <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                  {inView ? (
+                    <CountUp end={value} duration={2.5} suffix="+" />
+                  ) : (
+                    '0+'
+                  )}
+                </div>
+                <div className="text-white/70 text-sm font-medium">{label}</div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
